@@ -1,0 +1,386 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+@custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));
+
+@theme inline {
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  --color-background: var(--ds-bg);
+  --color-foreground: var(--ds-text);
+  --color-card: var(--ds-surface);
+  --color-card-foreground: var(--ds-text);
+  --color-popover: var(--ds-panel);
+  --color-popover-foreground: var(--ds-text);
+  --color-primary: var(--ds-btn);
+  --color-primary-foreground: var(--ds-btn-text);
+  --color-secondary: var(--ds-surface-raised);
+  --color-secondary-foreground: var(--ds-text);
+  --color-muted: var(--ds-surface-soft);
+  --color-muted-foreground: var(--ds-text-muted);
+  --color-accent: var(--ds-accent);
+  --color-accent-foreground: var(--ds-text);
+  --color-destructive: var(--ds-danger);
+  --color-destructive-foreground: #ffffff;
+  --color-border: var(--ds-border);
+  --color-input: var(--ds-surface-soft);
+  --color-ring: var(--ds-accent);
+
+  --color-panel: var(--ds-panel);
+  --color-panel-foreground: var(--ds-text);
+
+  --color-ok: var(--ds-success);
+  --color-warn: var(--ds-warning);
+  --color-crit: var(--ds-danger);
+  --color-info: var(--ds-info);
+
+  --color-sidebar: var(--ds-panel);
+  --color-sidebar-foreground: var(--ds-text-muted);
+  --color-sidebar-primary: var(--ds-accent);
+  --color-sidebar-primary-foreground: var(--ds-text);
+  --color-sidebar-accent: var(--ds-surface-raised);
+  --color-sidebar-accent-foreground: var(--ds-text);
+  --color-sidebar-border: var(--ds-border);
+  --color-sidebar-ring: var(--ds-accent);
+
+  --font-sans: "Inter", sans-serif;
+  --font-mono: "Inter", sans-serif; /* single font — mono aliased to Inter per brand */
+}
+
+/* ============================================================
+   DESIGN SYSTEM TOKENS — scoped to body[data-theme]
+   Default: dark
+   ============================================================ */
+
+body[data-theme="dark"] {
+  --ds-bg: #1c1c1c;
+  --ds-panel: #0a0a0a;
+  --ds-surface: #202020;
+  --ds-surface-soft: #141414;
+  --ds-surface-raised: #2a2a2a;
+
+  --ds-border: transparent;
+  --ds-border-soft: rgba(255, 255, 255, 0.06);
+  --ds-panel-border: transparent;
+
+  --ds-text: #e8eef5;
+  --ds-text-muted: #afc3d8;
+  --ds-text-faint: #8ca0b6;
+
+  --ds-accent: #c8c8c8;
+  --ds-accent-strong: #a8a8a8;
+  --ds-accent-bg: rgba(200, 200, 200, 0.08);
+  --ds-accent-border: rgba(200, 200, 200, 0.2);
+  --ds-chart-primary: #5b8de0;
+
+  --ds-btn: #3d3d3d;
+  --ds-btn-hover: #505050;
+  --ds-btn-text: #ffffff;
+
+  --ds-success: #16a34a;
+  --ds-success-bg: rgba(22, 163, 74, 0.12);
+  --ds-success-border: rgba(22, 163, 74, 0.35);
+  --ds-warning: #d97706;
+  --ds-warning-bg: rgba(245, 158, 11, 0.12);
+  --ds-warning-border: rgba(245, 158, 11, 0.35);
+  --ds-danger: #dc2626;
+  --ds-danger-bg: rgba(220, 38, 38, 0.12);
+  --ds-danger-border: rgba(220, 38, 38, 0.35);
+  --ds-info: #0ea5e9;
+  --ds-info-bg: rgba(14, 165, 233, 0.12);
+  --ds-info-border: rgba(14, 165, 233, 0.35);
+
+  --ds-advisory: #8b5cf6;
+  --ds-advisory-strong: #7c3aed;
+  --ds-advisory-panel: rgb(130, 90, 210);
+  --ds-advisory-border: rgba(139, 92, 246, 0.45);
+  --ds-violet: #8b5cf6;
+  --ds-violet-bg: rgba(139, 92, 246, 0.1);
+
+  --ds-shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --ds-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.28);
+  --ds-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.26);
+  --ds-shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.24);
+
+  /* Chart tokens — deliberately decoupled from --ds-border (transparent by
+     design for flat panels) and --ds-btn (near-black, meant for button
+     chrome). Reusing those for grid lines / trend strokes is what made
+     every chart in the app render as an invisible line on a black canvas. */
+  --chart-grid: rgba(255, 255, 255, 0.09);
+  --chart-axis: #94a3b8;
+  --chart-tooltip-bg: #1e1e1e;
+  --chart-tooltip-border: rgba(255, 255, 255, 0.14);
+  --chart-tooltip-text: #e8eef5;
+  --chart-line-gold: #d97706;
+  --chart-line-blue: #3b82f6;
+  --chart-line-purple: #8b5cf6;
+  --chart-divergence-fill: rgba(249, 115, 22, 0.55);
+  --chart-window-marker: rgba(148, 163, 184, 0.1);
+  --chart-window-marker-stroke: rgba(148, 163, 184, 0.4);
+}
+
+body[data-theme="light"] {
+  --ds-bg: #f1f5fa;
+  --ds-panel: #ffffff;
+  --ds-surface: #ffffff;
+  --ds-surface-soft: #f7f9fc;
+  --ds-surface-raised: #edf1f8;
+
+  --ds-border: rgba(0, 0, 0, 0.12);
+  --ds-border-soft: rgba(0, 0, 0, 0.07);
+  --ds-panel-border: rgba(0, 0, 0, 0.1);
+
+  --ds-text: #0d0d0d;
+  --ds-text-muted: #1f1f1f;
+  --ds-text-faint: #4a4a4a;
+
+  --ds-accent: #3b6dbf;
+  --ds-accent-strong: #2d5ca8;
+  --ds-accent-bg: rgba(59, 109, 191, 0.08);
+  --ds-accent-border: rgba(59, 109, 191, 0.22);
+  --ds-chart-primary: #3b7de8;
+
+  --ds-btn: #3b7de8;
+  --ds-btn-hover: #2d6ad4;
+  --ds-btn-text: #ffffff;
+
+  --ds-success: #15803d;
+  --ds-success-bg: rgba(22, 163, 74, 0.1);
+  --ds-success-border: rgba(22, 163, 74, 0.4);
+  --ds-warning: #c2410c;
+  --ds-warning-bg: rgba(217, 119, 6, 0.1);
+  --ds-warning-border: rgba(217, 119, 6, 0.45);
+  --ds-danger: #b91c1c;
+  --ds-danger-bg: rgba(220, 38, 38, 0.1);
+  --ds-danger-border: rgba(220, 38, 38, 0.4);
+  --ds-info: #0369a1;
+  --ds-info-bg: rgba(3, 105, 161, 0.09);
+  --ds-info-border: rgba(3, 105, 161, 0.35);
+
+  --ds-advisory: #7c3aed;
+  --ds-advisory-strong: #6d28d9;
+  --ds-advisory-panel: rgb(130, 90, 210);
+  --ds-advisory-border: rgba(139, 92, 246, 0.45);
+  --ds-violet: #7c3aed;
+  --ds-violet-bg: rgba(124, 58, 237, 0.1);
+
+  --ds-shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --ds-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.07);
+  --ds-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.09);
+  --ds-shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.11);
+
+  --chart-grid: rgba(0, 0, 0, 0.1);
+  --chart-axis: #475569;
+  --chart-tooltip-bg: #ffffff;
+  --chart-tooltip-border: rgba(0, 0, 0, 0.12);
+  --chart-tooltip-text: #0d0d0d;
+  --chart-line-gold: #b45309;
+  --chart-line-blue: #2563eb;
+  --chart-line-purple: #7c3aed;
+  --chart-divergence-fill: rgba(234, 88, 12, 0.4);
+  --chart-window-marker: rgba(71, 85, 105, 0.08);
+  --chart-window-marker-stroke: rgba(71, 85, 105, 0.35);
+}
+
+/* ============================================================
+   ISA-101 HIGH-PERFORMANCE DISPLAY MODE
+   Section 8.8 / ANSI-ISA-101.01-2015: normal-state elements are
+   rendered low-key gray; only abnormal (warning/danger) state
+   keeps saturated color, so real anomalies pop instead of
+   competing with decorative color. Toggled via body[data-isa101].
+   ============================================================ */
+body[data-isa101="true"] {
+  --ds-accent: #888e96;
+  --ds-accent-strong: #6d737b;
+  --ds-accent-bg: rgba(136, 142, 150, 0.08);
+  --ds-accent-border: rgba(136, 142, 150, 0.22);
+  --ds-chart-primary: #888e96;
+
+  --ds-info: #7a828c;
+  --ds-info-bg: rgba(122, 130, 140, 0.1);
+  --ds-info-border: rgba(122, 130, 140, 0.3);
+
+  --ds-success: #6f8a76;
+  --ds-success-bg: rgba(111, 138, 118, 0.1);
+  --ds-success-border: rgba(111, 138, 118, 0.3);
+
+  --ds-advisory: #888e96;
+  --ds-advisory-strong: #6d737b;
+  --ds-violet: #888e96;
+  --ds-violet-bg: rgba(136, 142, 150, 0.08);
+
+  /* --ds-warning and --ds-danger intentionally left saturated — reserved for abnormal state */
+}
+
+/* Sharp amber ring on unacknowledged anomalies — always on, intensified under ISA-101 mode */
+@utility isa-unack-ring {
+  box-shadow: 0 0 0 1px var(--ds-warning-border);
+}
+body[data-isa101="true"] .isa-unack-ring {
+  box-shadow:
+    0 0 0 1.5px var(--ds-warning),
+    0 0 0 4px var(--ds-warning-bg);
+}
+
+@layer base {
+  * {
+    border-color: var(--ds-border);
+  }
+  html,
+  body {
+    height: 100%;
+  }
+  body {
+    background: var(--ds-bg);
+    color: var(--ds-text);
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+  [dir="rtl"] {
+    font-family: "Inter", "Noto Kufi Arabic", sans-serif;
+  }
+}
+
+/* Panels: flat, opaque, no gradients, no elevation shadow at rest */
+@utility panel {
+  background: var(--ds-panel);
+  border: 1px solid var(--ds-panel-border);
+  border-radius: 12px;
+}
+
+@utility panel-accent {
+  background: var(--ds-panel);
+  border: 1px solid var(--ds-panel-border);
+  border-radius: 12px;
+}
+
+@utility surface {
+  background: var(--ds-surface);
+  border-radius: 10px;
+}
+
+/* Uppercase label helper */
+@utility label-cap {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  font-size: 10px;
+  line-height: 1;
+  color: var(--ds-text-muted);
+}
+
+/* KPI hover lift — transform only, no shadow */
+@utility kpi-lift {
+  transition: transform 0.18s ease-out;
+}
+.kpi-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* RAG chip */
+@utility chip-success {
+  background: var(--ds-success-bg);
+  color: var(--ds-success);
+  border: 1px solid var(--ds-success-border);
+}
+@utility chip-warning {
+  background: var(--ds-warning-bg);
+  color: var(--ds-warning);
+  border: 1px solid var(--ds-warning-border);
+}
+@utility chip-danger {
+  background: var(--ds-danger-bg);
+  color: var(--ds-danger);
+  border: 1px solid var(--ds-danger-border);
+}
+@utility chip-info {
+  background: var(--ds-info-bg);
+  color: var(--ds-info);
+  border: 1px solid var(--ds-info-border);
+}
+
+/* Animations */
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 var(--ds-danger-bg);
+  }
+  50% {
+    box-shadow: 0 0 0 6px transparent;
+  }
+}
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-slide-up {
+  animation: slide-up 0.25s ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+.animate-slide-in-right {
+  animation: slide-in-right 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Legacy alarm-pulse (map markers) — reduced to opacity only, no glow */
+@keyframes alarm-pulse-kf {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+.alarm-pulse {
+  animation: alarm-pulse-kf 1.6s ease-in-out infinite;
+}
+
+/* Scrollbar — flat */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--ds-surface-raised);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
