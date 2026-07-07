@@ -217,6 +217,76 @@ body[data-isa101="true"] {
   /* --ds-warning and --ds-danger intentionally left saturated — reserved for abnormal state */
 }
 
+/* ============================================================
+   SECTOR ACCENT TOKENS — Top-Level Sector-Domain Architecture
+   Water = Blue/Purple · Gas = Amber/Orange · Electric = Teal/Yellow
+   Layered on top of body[data-theme] via body[data-sector].
+   ============================================================ */
+body[data-theme="dark"][data-sector="water"] {
+  --ds-accent: #7c8cff;
+  --ds-accent-strong: #6366f1;
+  --ds-accent-bg: rgba(99, 102, 241, 0.1);
+  --ds-accent-border: rgba(99, 102, 241, 0.3);
+  --ds-chart-primary: #6366f1;
+  --ds-btn: #4f46e5;
+  --ds-btn-hover: #4338ca;
+  --chart-line-blue: #6366f1;
+}
+body[data-theme="light"][data-sector="water"] {
+  --ds-accent: #4f46e5;
+  --ds-accent-strong: #4338ca;
+  --ds-accent-bg: rgba(79, 70, 229, 0.08);
+  --ds-accent-border: rgba(79, 70, 229, 0.24);
+  --ds-chart-primary: #4f46e5;
+  --ds-btn: #4f46e5;
+  --ds-btn-hover: #4338ca;
+  --chart-line-blue: #4338ca;
+}
+
+body[data-theme="dark"][data-sector="gas"] {
+  --ds-accent: #fbbf24;
+  --ds-accent-strong: #f59e0b;
+  --ds-accent-bg: rgba(245, 158, 11, 0.12);
+  --ds-accent-border: rgba(245, 158, 11, 0.32);
+  --ds-chart-primary: #f59e0b;
+  --ds-btn: #ea580c;
+  --ds-btn-hover: #c2410c;
+  --chart-line-blue: #f59e0b;
+}
+body[data-theme="light"][data-sector="gas"] {
+  --ds-accent: #c2410c;
+  --ds-accent-strong: #9a3412;
+  --ds-accent-bg: rgba(194, 65, 12, 0.08);
+  --ds-accent-border: rgba(194, 65, 12, 0.26);
+  --ds-chart-primary: #c2410c;
+  --ds-btn: #c2410c;
+  --ds-btn-hover: #9a3412;
+  --chart-line-blue: #c2410c;
+}
+
+body[data-theme="dark"][data-sector="electric"] {
+  --ds-accent: #2dd4bf;
+  --ds-accent-strong: #14b8a6;
+  --ds-accent-bg: rgba(20, 184, 166, 0.12);
+  --ds-accent-border: rgba(20, 184, 166, 0.32);
+  --ds-chart-primary: #14b8a6;
+  --ds-btn: #0d9488;
+  --ds-btn-hover: #0f766e;
+  --chart-line-blue: #14b8a6;
+  --ds-sector-highlight: #eab308;
+}
+body[data-theme="light"][data-sector="electric"] {
+  --ds-accent: #0d9488;
+  --ds-accent-strong: #0f766e;
+  --ds-accent-bg: rgba(13, 148, 136, 0.08);
+  --ds-accent-border: rgba(13, 148, 136, 0.24);
+  --ds-chart-primary: #0d9488;
+  --ds-btn: #0d9488;
+  --ds-btn-hover: #0f766e;
+  --chart-line-blue: #0f766e;
+  --ds-sector-highlight: #ca8a04;
+}
+
 /* Sharp amber ring on unacknowledged anomalies — always on, intensified under ISA-101 mode */
 @utility isa-unack-ring {
   box-shadow: 0 0 0 1px var(--ds-warning-border);

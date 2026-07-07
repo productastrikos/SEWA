@@ -1,3 +1,5 @@
+import type { AdvisoryItem } from "@/lib/app-context";
+
 export type Asset = {
   id: string;
   tag: string; // official RFP-coded identifier (Section 1.6.4) — anonymized per SEWA operational security note
@@ -517,6 +519,12 @@ export const ASSETS: Asset[] = (() => {
   });
 })();
 
+// Domain-scoped views over the shared asset registry — Water sector pages
+// only show the 34 water stations; Gas sector pages only show the 8 coded
+// Gas distribution stations (Station-1 … Station-8).
+export const WATER_ASSETS: Asset[] = ASSETS.filter((a) => a.domain === "Water");
+export const GAS_ASSETS: Asset[] = ASSETS.filter((a) => a.domain === "Gas");
+
 export type Alarm = {
   id: string;
   ts: string;
@@ -732,3 +740,405 @@ export const DMA_ZONES = [
     labelY: 25,
   },
 ];
+
+/* ============================================================
+   GAS SECTOR — Natural Gas Sector mock data
+   8 coded facilities (Station-1 … Station-8) sourced from GAS_ASSETS.
+   Reuses Asset.flow as Output Flow Rate (m³/hr) and Asset.pressure as
+   Delivery Pressure (Bar) for the Gas Asset Detail page.
+   ============================================================ */
+
+export const GAS_KPI = {
+  totalThroughput: GAS_ASSETS.reduce((sum, a) => sum + a.flow, 0),
+  criticalCount: GAS_ASSETS.filter((a) => a.status === "crit").length,
+  availability: 99.62,
+  networkPressureStability: 97.8,
+};
+
+export const GAS_ALARMS: Alarm[] = [
+  {
+    id: "GAL-2201",
+    ts: "14:12:18.402",
+    asset: "Station-3",
+    severity: 1,
+    description: "Delivery pressure drop below 2.1 bar minimum envelope",
+    descriptionAr: "انخفاض ضغط التسليم عن الحد الأدنى 2.1 بار",
+    ack: false,
+  },
+  {
+    id: "GAL-2200",
+    ts: "14:08:52.114",
+    asset: "Station-7",
+    severity: 2,
+    description: "Odorant injection pump duty cycle irregular",
+    descriptionAr: "دورة تشغيل مضخة حقن الرائحة غير منتظمة",
+    ack: false,
+  },
+  {
+    id: "GAL-2199",
+    ts: "13:57:03.881",
+    asset: "Station-5",
+    severity: 2,
+    description: "Regulator outlet pressure surge +0.4 bar transient",
+    descriptionAr: "ارتفاع مؤقت في ضغط مخرج المنظم +0.4 بار",
+    ack: true,
+  },
+  {
+    id: "GAL-2198",
+    ts: "13:41:27.509",
+    asset: "Station-8",
+    severity: 3,
+    description: "Under-construction station — telemetry link pending commissioning",
+    descriptionAr: "محطة قيد الإنشاء — رابط القياس عن بعد بانتظار التشغيل التجريبي",
+    ack: true,
+  },
+];
+
+export const GAS_SCENARIOS = [
+  { id: "valve", label: "Emergency Valve Closure", labelAr: "إغلاق طارئ للصمام" },
+  { id: "compressor", label: "Compressor Trip", labelAr: "توقف ضاغط الغاز" },
+  { id: "surge", label: "Pressure Surge Event", labelAr: "حدث ارتفاع الضغط" },
+  { id: "odorant", label: "Odorant Injection Fault", labelAr: "عطل حقن الرائحة" },
+];
+
+export const GAS_RISK_MATRIX = [
+  {
+    facility: "Sharjah Industrial Zone 2 (Gas-fed boilers)",
+    type: "Industrial",
+    impact: "Critical",
+    eta: "12 min",
+    pop: 6200,
+    bypass: "Cross-feed from Station-2 regulator set; open bypass loop within 6 min",
+  },
+  {
+    facility: "Kalba District Distribution Ring",
+    type: "Residential / Commercial",
+    impact: "High",
+    eta: "26 min",
+    pop: 9400,
+    bypass: "Isolate Station-4 downstream segment; maintain ring-feed from Station-5",
+  },
+  {
+    facility: "Khorfakkan Coastal Supply Loop",
+    type: "Residential",
+    impact: "Medium",
+    eta: "48 min",
+    pop: 5100,
+    bypass: "Sequential regulator throttling; restore via Station-5 reserve capacity",
+  },
+];
+
+// Gas Network Audit Ledger — pressure-loss / leak-survey equivalent of the
+// water DMA leakage ledger, tracked per coded facility instead of per DMA.
+export const GAS_AUDIT_LEDGER = [
+  { id: "Station-1", name: "Sharjah North Gate Station", loss: 1.2, mnp: 18, cons: 4200 },
+  { id: "Station-2", name: "Sharjah Central Regulating Station", loss: 2.4, mnp: 26, cons: 5600 },
+  { id: "Station-3", name: "Sharjah East Metering Station", loss: 6.8, mnp: 61, cons: 3100 },
+  { id: "Station-4", name: "Kalba Distribution Station", loss: 3.1, mnp: 22, cons: 2800 },
+  { id: "Station-5", name: "Khorfakkan Coastal Station", loss: 2.0, mnp: 15, cons: 2100 },
+  { id: "Station-6", name: "Dibba Terminal Station", loss: 1.6, mnp: 12, cons: 1400 },
+];
+
+export const GAS_AUDIT_ZONES = [
+  {
+    id: "GAZ-SHJ-01",
+    label: "Sharjah Gas Distribution Zone",
+    path: "M10,20 Q30,10 55,25 T90,30 L88,55 Q60,68 30,60 T8,50 Z",
+    fill: "rgba(245,158,11,0.08)",
+    stroke: "rgba(245,158,11,0.35)",
+    labelX: 30,
+    labelY: 32,
+  },
+  {
+    id: "GAZ-KLB-02",
+    label: "Kalba Gas Ring",
+    path: "M15,60 Q40,55 65,70 T92,75 L90,90 L20,92 Z",
+    fill: "rgba(234,88,12,0.06)",
+    stroke: "rgba(234,88,12,0.30)",
+    labelX: 55,
+    labelY: 78,
+  },
+  {
+    id: "GAZ-KFK-03",
+    label: "Khorfakkan Gas Loop",
+    path: "M55,10 Q75,15 90,20 L92,40 Q75,42 60,35 Z",
+    fill: "rgba(217,119,6,0.06)",
+    stroke: "rgba(217,119,6,0.30)",
+    labelX: 75,
+    labelY: 25,
+  },
+];
+
+// Gas Quality & Odorization — LIMS-equivalent lab cross-validation dataset
+export const GAS_QUALITY_SAMPLES = [
+  { id: "GQ-2026-3311", site: "Station-1", odorant: 18.2, calorific: 38.4, moisture: 0.12, delta: "+2%", flag: "OK" },
+  { id: "GQ-2026-3310", site: "Station-3", odorant: 12.4, calorific: 37.9, moisture: 0.21, delta: "-31%", flag: "DRIFT" },
+  { id: "GQ-2026-3309", site: "Station-4", odorant: 17.6, calorific: 38.6, moisture: 0.10, delta: "+1%", flag: "OK" },
+  { id: "GQ-2026-3308", site: "Station-5", odorant: 18.0, calorific: 38.2, moisture: 0.14, delta: "0%", flag: "OK" },
+  { id: "GQ-2026-3307", site: "Station-2", odorant: 17.9, calorific: 38.1, moisture: 0.13, delta: "-1%", flag: "OK" },
+];
+
+// Gas-specific on-premises operations advisory copy, keyed by asset tag —
+// surfaced on the Gas Asset Detail split-pane per the coded facility.
+export const GAS_OPS_ADVICE: Record<string, string> = {
+  "Station-1": "Delivery pressure and output flow rate are within nominal envelope. Continue standard 4-hour regulator inspection rounds; no on-premises intervention required this shift.",
+  "Station-2": "Output flow rate trending toward upper distribution limit. Recommend throttling upstream regulator by 4% and logging a preventive inspection of the pressure-reducing valve train.",
+  "Station-3": "Delivery pressure has fallen below the 2.1 bar minimum envelope (Sev-1 GAL-2201). Dispatch an on-premises technician immediately to inspect the regulator diaphragm and odorant injection skid before re-pressurizing.",
+  "Station-4": "Output flow rate and delivery pressure nominal. Cross-tie valve to Station-5 should remain in standby (closed) position per current ring-feed configuration.",
+  "Station-5": "Minor regulator outlet pressure surge recorded (GAL-2199, acknowledged). Verify surge relief valve reseated correctly during the next on-premises walkdown.",
+  "Station-6": "Delivery pressure and output flow rate nominal. No on-premises action required; maintain standard telemetry polling interval.",
+  "Station-7": "Odorant injection duty cycle irregular (GAL-2200). On-premises technician should verify odorant reservoir level and injection pump calibration before next scheduled delivery.",
+  "Station-8": "Station is under construction — telemetry link pending commissioning. On-premises crew must confirm edge-device provisioning before this facility can report live output flow rate or delivery pressure.",
+};
+
+/* ============================================================
+   ADVISORY PANEL GENERATORS
+   Right-side Operations Advisory Panel content, contextualized per
+   asset tag. Each item can expand into a nested diagnostic breakdown
+   with an [ Assign Task ] action inside the panel.
+   ============================================================ */
+
+export function buildWaterAdvisories(asset: Asset): AdvisoryItem[] {
+  return [
+    {
+      id: `${asset.tag}-ADV-1`,
+      title: "Pump efficiency drift identified",
+      titleAr: "تم رصد انحراف في كفاءة المضخة",
+      severity: "warning",
+      category: "Maintenance",
+      categoryAr: "الصيانة",
+      summary: `${asset.tag} hydraulic efficiency has drifted -4.4% below the commissioning baseline over the last 72 hours.`,
+      summaryAr: `انحرفت كفاءة ${asset.tag} الهيدروليكية بنسبة -4.4% عن خط الأساس خلال آخر 72 ساعة.`,
+      diagnostic: `Efficiency 91.2% (Δ -4.4%) · Seal chamber ΔP +0.3 bar · DE vibration 6.1 mm/s`,
+      diagnosticAr: `الكفاءة 91.2% (Δ -4.4%) · فرق ضغط حجرة الحشية +0.3 بار · اهتزاز المحمل 6.1 مم/ث`,
+      coordinate: `Valve V-${asset.tag}-04 · Discharge header`,
+      history: "3 similar drift events in the last 90 days, each resolved via mechanical seal inspection.",
+      historyAr: "3 أحداث انحراف مشابهة خلال آخر 90 يوماً، تم حلها جميعاً عبر فحص الحشية الميكانيكية.",
+    },
+    {
+      id: `${asset.tag}-ADV-2`,
+      title: "Pipeline head loss violation warning",
+      titleAr: "تحذير مخالفة فقدان الضغط في خط الأنابيب",
+      severity: "danger",
+      category: "Network Operations",
+      categoryAr: "عمليات الشبكة",
+      summary: `Trunk main downstream of ${asset.tag} shows head loss exceeding the modeled envelope by 14%.`,
+      summaryAr: `يُظهر الخط الرئيسي أسفل ${asset.tag} فقداناً في الضغط يتجاوز النموذج المرجعي بنسبة 14%.`,
+      diagnostic: `Modeled head loss 2.1 m · Observed 2.4 m (+14%) · Flow ${asset.flow.toLocaleString()} m³/hr`,
+      diagnosticAr: `فقدان الضغط النموذجي 2.1 م · الملحوظ 2.4 م (+14%) · التدفق ${asset.flow.toLocaleString()} م³/ساعة`,
+      coordinate: `Trunk main · Node N-${asset.tag}-12`,
+      history: "Pipeline segment last pigged 14 months ago; scale buildup suspected.",
+      historyAr: "تم تنظيف خط الأنابيب آخر مرة قبل 14 شهراً؛ يُشتبه بتراكم الترسبات.",
+    },
+    {
+      id: `${asset.tag}-ADV-3`,
+      title: "Time-of-Use tariff threshold alert",
+      titleAr: "تنبيه تجاوز حد تعرفة وقت الاستخدام",
+      severity: "info",
+      category: "Energy Optimization",
+      categoryAr: "تحسين الطاقة",
+      summary: `${asset.tag} pumping load is drawing during the 12:00–17:00 peak tariff window.`,
+      summaryAr: `يسحب حمل الضخ في ${asset.tag} خلال نافذة تعرفة الذروة 12:00–17:00.`,
+      diagnostic: `Peak-window draw 22 min today · Tariff rate AED 0.42/kWh vs AED 0.15/kWh off-peak`,
+      diagnosticAr: `سحب نافذة الذروة 22 دقيقة اليوم · تعرفة 0.42 درهم/ك.و.س مقابل 0.15 درهم خارج الذروة`,
+      coordinate: `Feeder breaker · BRK-${asset.tag}-02`,
+      history: "Recommend shifting reservoir refill cycle to the 22:00–06:00 off-peak window.",
+      historyAr: "يوصى بتحويل دورة إعادة تعبئة الخزان إلى نافذة خارج الذروة 22:00–06:00.",
+    },
+  ];
+}
+
+export function buildGasAdvisories(asset: Asset): AdvisoryItem[] {
+  return [
+    {
+      id: `${asset.tag}-ADV-1`,
+      title: "Delivery pressure regulator drift",
+      titleAr: "انحراف منظم ضغط التسليم",
+      severity: "warning",
+      category: "Maintenance",
+      categoryAr: "الصيانة",
+      summary: `${asset.tag} regulator outlet pressure has drifted -0.4 bar below the nominal set point.`,
+      summaryAr: `انحرف ضغط مخرج منظم ${asset.tag} بمقدار -0.4 بار عن نقطة الضبط الطبيعية.`,
+      diagnostic: `Delivery pressure ${asset.pressure} bar (Δ -0.4) · Regulator response +40 ms`,
+      diagnosticAr: `ضغط التسليم ${asset.pressure} بار (Δ -0.4) · زمن استجابة المنظم +40 ملي ثانية`,
+      coordinate: `Regulator set · REG-${asset.tag}-01`,
+      history: "Diaphragm wear consistent with early-stage degradation; last replaced 18 months ago.",
+      historyAr: "تآكل الغشاء يتوافق مع تدهور مبكر؛ تم استبداله آخر مرة قبل 18 شهراً.",
+    },
+    {
+      id: `${asset.tag}-ADV-2`,
+      title: "Odorant injection concentration alert",
+      titleAr: "تنبيه تركيز حقن الرائحة",
+      severity: "danger",
+      category: "Compliance",
+      categoryAr: "الامتثال",
+      summary: `${asset.tag} odorant concentration reads below the 16 mg/m³ regulatory minimum.`,
+      summaryAr: `يقرأ تركيز الرائحة في ${asset.tag} أقل من الحد التنظيمي الأدنى البالغ 16 مغ/م³.`,
+      diagnostic: `Odorant concentration 12.4 mg/m³ (target 18.0) · Injection pump duty irregular`,
+      diagnosticAr: `تركيز الرائحة 12.4 مغ/م³ (الهدف 18.0) · دورة تشغيل مضخة الحقن غير منتظمة`,
+      coordinate: `Odorant skid · OD-${asset.tag}-01`,
+      history: "Injection pump calibration drift flagged twice in the last quarter.",
+      historyAr: "تم رصد انحراف معايرة مضخة الحقن مرتين خلال الربع الأخير.",
+    },
+    {
+      id: `${asset.tag}-ADV-3`,
+      title: "Compressor duty-cycle threshold warning",
+      titleAr: "تحذير تجاوز حد دورة تشغيل الضاغط",
+      severity: "info",
+      category: "Operations",
+      categoryAr: "العمليات",
+      summary: `${asset.tag} compressor duty cycle is trending toward the 85% sustained-load threshold.`,
+      summaryAr: `تتجه دورة تشغيل ضاغط ${asset.tag} نحو حد الحمل المستمر البالغ 85%.`,
+      diagnostic: `Duty cycle 81% (24h avg) · Output flow rate ${asset.flow.toLocaleString()} m³/hr`,
+      diagnosticAr: `دورة التشغيل 81% (متوسط 24 ساعة) · معدل تدفق المخرج ${asset.flow.toLocaleString()} م³/ساعة`,
+      coordinate: `Compressor bay · CMP-${asset.tag}-01`,
+      history: "Recommend load-balancing against the adjacent facility during peak network demand.",
+      historyAr: "يوصى بموازنة الحمل مع المنشأة المجاورة خلال ذروة الطلب على الشبكة.",
+    },
+  ];
+}
+
+// Standard Operating Procedure checklist options offered in the Assign
+// Alert Panel's SOP Checklist Selector, per sector.
+export const WATER_SOP_OPTIONS = [
+  "SOP-WTR-4421 · Distribution Pump Restart",
+  "SOP-QA-118 · Analyzer Calibration",
+  "SOP-EMG-002 · Emergency Isolation & Bypass",
+  "Generic Emergency Response Checklist",
+];
+
+export const GAS_SOP_OPTIONS = [
+  "SOP-GAS-2210 · Regulator Set Startup",
+  "SOP-GAS-118 · Odorant Analyzer Calibration",
+  "SOP-EMG-002 · Emergency Isolation & Bypass",
+  "Generic Emergency Response Checklist",
+];
+
+/* ============================================================
+   SECTOR-WIDE AI ADVISORY GENERATORS
+   Network-level recommendations (not tied to one asset) so the AI
+   Advisory button in the header always has something meaningful to
+   show, on any page, in any sector — falling back from the more
+   specific per-asset advisories generated on the Asset Detail pages.
+   ============================================================ */
+
+export function buildWaterSectorAdvisories(): AdvisoryItem[] {
+  const unacked = ALARMS.filter((a) => !a.ack).length;
+  return [
+    {
+      id: "NET-WTR-ADV-1",
+      title: "Network-wide Sev-1 alarm backlog",
+      titleAr: "تراكم إنذارات الفئة 1 على مستوى الشبكة",
+      severity: unacked > 2 ? "danger" : "warning",
+      category: "Operations",
+      categoryAr: "العمليات",
+      summary: `${unacked} Sev-1 alarms remain unacknowledged across the water network in the current shift window.`,
+      summaryAr: `لا تزال ${unacked} إنذارات من الفئة 1 غير مؤكدة عبر شبكة المياه خلال نافذة النوبة الحالية.`,
+      diagnostic: `Availability ${KPI.availability}% · Total production ${KPI.production.toLocaleString()} m³/hr`,
+      diagnosticAr: `التوافر ${KPI.availability}% · إجمالي الإنتاج ${KPI.production.toLocaleString()} م³/ساعة`,
+      coordinate: "Network Operations Center · Shift Queue",
+      history: "Recommend triaging oldest unacknowledged alarms first per shift handover SOP.",
+      historyAr: "يوصى بمعالجة أقدم الإنذارات غير المؤكدة أولاً وفق إجراء تسليم النوبة.",
+    },
+    {
+      id: "NET-WTR-ADV-2",
+      title: "Non-Revenue Water trending near threshold",
+      titleAr: "المياه غير المُحصَّلة تقترب من الحد الأقصى",
+      severity: "warning",
+      category: "Network Audit",
+      categoryAr: "تدقيق الشبكة",
+      summary: "Emirate-wide NRW is holding at 10.4%, close to the 12% governance threshold.",
+      summaryAr: "تبلغ نسبة المياه غير المُحصَّلة على مستوى الإمارة 10.4%، قريباً من حد الحوكمة البالغ 12%.",
+      diagnostic: "NRW 10.4% · 6 DMAs above alarm threshold · Estimated losses 42,180 m³/d",
+      diagnosticAr: "المياه غير المُحصَّلة 10.4% · 6 مناطق قياس فوق حد الإنذار · الفاقد المقدر 42,180 م³/يوم",
+      coordinate: "DMA Water Audit · Network-wide",
+      history: "3 DMAs flagged for acoustic leak survey in the last audit cycle.",
+      historyAr: "تم تحديد 3 مناطق قياس لمسح صوتي للتسريبات في دورة التدقيق الأخيرة.",
+    },
+    {
+      id: "NET-WTR-ADV-3",
+      title: "Time-of-Use tariff optimization opportunity",
+      titleAr: "فرصة لتحسين تعرفة وقت الاستخدام",
+      severity: "info",
+      category: "Energy Optimization",
+      categoryAr: "تحسين الطاقة",
+      summary: "Peak-window pumping load can be shifted further to capture additional off-peak savings.",
+      summaryAr: "يمكن تحويل حمل الضخ خلال نافذة الذروة أكثر لتحقيق وفورات إضافية خارج الذروة.",
+      diagnostic: "Current SEC 0.548 kWh/m³ · FY26 target 0.55 · ToU compliance 94.2%",
+      diagnosticAr: "استهلاك الطاقة النوعي الحالي 0.548 ك.و.س/م³ · هدف 2026 0.55 · امتثال ToU 94.2%",
+      coordinate: "Executive Strategy · Energy Optimization",
+      history: "Estimated additional savings of AED 3.6M/month achievable with full off-peak shift.",
+      historyAr: "يمكن تحقيق وفورات إضافية تقدر بـ 3.6 مليون درهم/شهر عبر التحول الكامل خارج الذروة.",
+    },
+  ];
+}
+
+export function buildGasSectorAdvisories(): AdvisoryItem[] {
+  return [
+    {
+      id: "NET-GAS-ADV-1",
+      title: "Network-wide Sev-1 alarm backlog",
+      titleAr: "تراكم إنذارات الفئة 1 على مستوى الشبكة",
+      severity: GAS_KPI.criticalCount > 0 ? "danger" : "info",
+      category: "Operations",
+      categoryAr: "العمليات",
+      summary: `${GAS_KPI.criticalCount} Sev-1 gas network alarms remain unacknowledged in the current shift window.`,
+      summaryAr: `لا تزال ${GAS_KPI.criticalCount} إنذارات من الفئة 1 لشبكة الغاز غير مؤكدة خلال نافذة النوبة الحالية.`,
+      diagnostic: `Availability ${GAS_KPI.availability}% · Network pressure stability ${GAS_KPI.networkPressureStability}%`,
+      diagnosticAr: `التوافر ${GAS_KPI.availability}% · استقرار ضغط الشبكة ${GAS_KPI.networkPressureStability}%`,
+      coordinate: "Gas Network Operations Center · Shift Queue",
+      history: "Recommend triaging oldest unacknowledged alarms first per shift handover SOP.",
+      historyAr: "يوصى بمعالجة أقدم الإنذارات غير المؤكدة أولاً وفق إجراء تسليم النوبة.",
+    },
+    {
+      id: "NET-GAS-ADV-2",
+      title: "Pressure-loss audit trending near threshold",
+      titleAr: "تدقيق فقدان الضغط يقترب من الحد الأقصى",
+      severity: "warning",
+      category: "Network Audit",
+      categoryAr: "تدقيق الشبكة",
+      summary: "Network-wide pressure loss is holding at 2.9%, with Station-3 flagged for investigation.",
+      summaryAr: "يبلغ فقدان الضغط على مستوى الشبكة 2.9%، مع تحديد المحطة-3 للتحقيق.",
+      diagnostic: "Network loss 2.9% · 1 facility above alarm threshold · Estimated losses 3,240 m³/d",
+      diagnosticAr: "فقدان الشبكة 2.9% · منشأة واحدة فوق حد الإنذار · الفاقد المقدر 3,240 م³/يوم",
+      coordinate: "Gas Network Audit Ledger · Network-wide",
+      history: "Station-3 East Metering flagged for field crew inspection this cycle.",
+      historyAr: "تم تحديد محطة الشرق للقياس-3 لفحص فريق ميداني في هذه الدورة.",
+    },
+    {
+      id: "NET-GAS-ADV-3",
+      title: "Odorant compliance fleet-wide check",
+      titleAr: "فحص الامتثال لتركيز الرائحة على مستوى الأسطول",
+      severity: "info",
+      category: "Compliance",
+      categoryAr: "الامتثال",
+      summary: "Fleet-wide odorant concentration is within target at all facilities except Station-3.",
+      summaryAr: "تركيز الرائحة على مستوى الأسطول ضمن الهدف في جميع المنشآت باستثناء المحطة-3.",
+      diagnostic: "Target 16–20 mg/m³ · Station-3 reading 12.4 mg/m³ (-31%)",
+      diagnosticAr: "الهدف 16–20 مغ/م³ · قراءة المحطة-3 12.4 مغ/م³ (-31%)",
+      coordinate: "Gas Quality & Odorization · Network-wide",
+      history: "Recommend scheduling odorant injection pump recalibration for Station-3.",
+      historyAr: "يوصى بجدولة إعادة معايرة مضخة حقن الرائحة للمحطة-3.",
+    },
+  ];
+}
+
+export function buildElectricSectorAdvisories(): AdvisoryItem[] {
+  return [
+    {
+      id: "NET-ELEC-ADV-1",
+      title: "Electrical Power Grid sector commissioning",
+      titleAr: "قطاع شبكة الطاقة الكهربائية قيد التشغيل التجريبي",
+      severity: "info",
+      category: "Commissioning",
+      categoryAr: "التشغيل التجريبي",
+      summary: "AI advisory coverage for the Electrical Power Grid sector will activate once grid telemetry pages are commissioned.",
+      summaryAr: "سيتم تفعيل تغطية الإرشاد الذكي لقطاع شبكة الطاقة الكهربائية بمجرد تشغيل صفحات القياس عن بعد للشبكة.",
+      diagnostic: "Sector switcher, theme accent, and layout context are live; telemetry feed pending.",
+      diagnosticAr: "مبدّل القطاعات ولون الواجهة والتخطيط جاهزون؛ تغذية القياس عن بعد قيد الانتظار.",
+      coordinate: "Electrical Power Grid · Sector-wide",
+      history: "No historical telemetry available yet for this sector.",
+      historyAr: "لا توجد بيانات قياس عن بعد تاريخية متاحة بعد لهذا القطاع.",
+    },
+  ];
+}

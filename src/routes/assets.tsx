@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader, Panel } from "@/components/AppShell";
 import { useApp } from "@/lib/app-context";
-import { ASSETS, ASSET_CATEGORIES, series, type Asset } from "@/lib/mock-data";
+import { WATER_ASSETS as ASSETS, ASSET_CATEGORIES, series, buildWaterAdvisories, type Asset } from "@/lib/mock-data";
+
+const WATER_ASSET_CATEGORIES = ASSET_CATEGORIES.filter((c) => c.value !== "Gas Distribution Station");
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Search,
@@ -42,10 +44,10 @@ export const Route = createFileRoute("/assets")({
 type DetailTab = "telemetry" | "health" | "sap" | "gis" | "sop";
 
 function AssetsPage() {
-  const { t, lang } = useApp();
+  const { t, lang, openAdvisoryPanel, setCurrentAdvisoryContext } = useApp();
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<string>("all");
-  const [selected, setSelected] = useState<Asset | null>(ASSETS[1]);
+  const [selected, setSelected] = useState<Asset | null>(null);
   const [activeTab, setActiveTab] = useState<DetailTab>("telemetry");
   const mapRef = useRef<GisMapHandle>(null);
 
@@ -57,6 +59,17 @@ function AssetsPage() {
       zoom: 12.4,
     });
   }, [selected]);
+
+  useEffect(() => {
+    if (!selected) return;
+    setCurrentAdvisoryContext({
+      assetId: selected.id,
+      assetTag: selected.tag,
+      sectorLabel: "Water",
+      items: buildWaterAdvisories(selected),
+    });
+    return () => setCurrentAdvisoryContext(null);
+  }, [selected, setCurrentAdvisoryContext]);
 
   const filtered = useMemo(() => {
     const ql = q.toLowerCase();
@@ -101,7 +114,7 @@ function AssetsPage() {
           className="rounded-md border border-border bg-panel px-3 py-2 text-[12px] focus:outline-none focus:ring-2 focus:ring-primary/40"
           aria-label={t("categoryFilter")}
         >
-          {ASSET_CATEGORIES.map((c) => (
+          {WATER_ASSET_CATEGORIES.map((c) => (
             <option key={c.value} value={c.value}>
               {lang === "ar" ? c.labelAr : c.label}
             </option>
@@ -112,8 +125,9 @@ function AssetsPage() {
         </div>
       </div>
 
-      <div className="grid flex-1 min-h-0 gap-4 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.25fr)]">
-        <Panel title="Master Asset Entry" className="flex min-h-0 flex-col">
+      <div className="flex-1 min-h-0">
+        {!selected && (
+        <Panel title="Master Asset Entry" className="flex h-full min-h-0 flex-col">
           <div className="-mx-4 -mb-4 overflow-auto">
             <table className="w-full text-[12px]">
               <thead className="sticky top-0 bg-panel">
@@ -129,7 +143,7 @@ function AssetsPage() {
                   <tr
                     key={asset.id}
                     onClick={() => setSelected(asset)}
-                    className={`cursor-pointer border-t border-border/60 transition hover:bg-primary/5 ${selected?.id === asset.id ? "bg-primary/10" : ""}`}
+                    className="cursor-pointer border-t border-border/60 transition hover:bg-primary/5"
                   >
                     <td className="px-4 py-2">
                       <div className="font-mono text-[11.5px] text-accent">{asset.tag}</div>
@@ -168,14 +182,10 @@ function AssetsPage() {
             </table>
           </div>
         </Panel>
+        )}
 
-        <Panel title={selected ? selected.tag : "Asset Drill-Down"} className="flex min-h-0 flex-col">
-          {!selected ? (
-            <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-border/70 p-8 text-center text-[12px] text-muted-foreground">
-              Select an asset from the registry to open the dedicated control-room detail workspace.
-            </div>
-          ) : (
-            <>
+        {selected && (
+        <Panel title={selected.tag} className="flex h-full min-h-0 flex-col">
               <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <div className="text-[11px] font-medium uppercase tracking-[0.24em] text-muted-foreground">
@@ -366,7 +376,26 @@ function AssetsPage() {
 
               {activeTab === "sop" && (
                 <div className="space-y-4">
-                  <Panel title="Operations Assistant & SOPs">
+                  <Panel
+                    title="Operations Assistant & SOPs"
+                    right={
+                      <button
+                        onClick={() =>
+                          openAdvisoryPanel({
+                            assetId: selected.id,
+                            assetTag: selected.tag,
+                            sectorLabel: "Water",
+                            items: buildWaterAdvisories(selected),
+                          })
+                        }
+                        className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[10.5px] font-semibold text-white"
+                        style={{ background: "var(--ds-advisory)" }}
+                      >
+                        <Sparkles className="h-3.5 w-3.5" />
+                        {t("openAdvisory")}
+                      </button>
+                    }
+                  >
                     <div className="rounded-xl border border-border/70 bg-surface-soft p-4 text-[12px] leading-6 text-muted-foreground">
                       <div className="mb-2 flex items-center gap-2 font-semibold text-accent">
                         <Sparkles className="h-4 w-4" />
@@ -391,9 +420,8 @@ function AssetsPage() {
                   </Panel>
                 </div>
               )}
-            </>
-          )}
         </Panel>
+        )}
       </div>
     </div>
   );

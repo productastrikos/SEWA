@@ -17,6 +17,14 @@ import { Route as DmaRouteImport } from './routes/dma'
 import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as AssetsRouteImport } from './routes/assets'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GasIndexRouteImport } from './routes/gas/index'
+import { Route as ElectricIndexRouteImport } from './routes/electric/index'
+import { Route as GasSimulatorRouteImport } from './routes/gas/simulator'
+import { Route as GasQualityRouteImport } from './routes/gas/quality'
+import { Route as GasGovernanceRouteImport } from './routes/gas/governance'
+import { Route as GasDmaRouteImport } from './routes/gas/dma'
+import { Route as GasAssistantRouteImport } from './routes/gas/assistant'
+import { Route as GasAssetsRouteImport } from './routes/gas/assets'
 
 const SimulatorRoute = SimulatorRouteImport.update({
   id: '/simulator',
@@ -58,6 +66,46 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GasIndexRoute = GasIndexRouteImport.update({
+  id: '/gas/',
+  path: '/gas/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ElectricIndexRoute = ElectricIndexRouteImport.update({
+  id: '/electric/',
+  path: '/electric/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GasSimulatorRoute = GasSimulatorRouteImport.update({
+  id: '/gas/simulator',
+  path: '/gas/simulator',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GasQualityRoute = GasQualityRouteImport.update({
+  id: '/gas/quality',
+  path: '/gas/quality',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GasGovernanceRoute = GasGovernanceRouteImport.update({
+  id: '/gas/governance',
+  path: '/gas/governance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GasDmaRoute = GasDmaRouteImport.update({
+  id: '/gas/dma',
+  path: '/gas/dma',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GasAssistantRoute = GasAssistantRouteImport.update({
+  id: '/gas/assistant',
+  path: '/gas/assistant',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GasAssetsRoute = GasAssetsRouteImport.update({
+  id: '/gas/assets',
+  path: '/gas/assets',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -68,6 +116,14 @@ export interface FileRoutesByFullPath {
   '/governance': typeof GovernanceRoute
   '/quality': typeof QualityRoute
   '/simulator': typeof SimulatorRoute
+  '/gas/assets': typeof GasAssetsRoute
+  '/gas/assistant': typeof GasAssistantRoute
+  '/gas/dma': typeof GasDmaRoute
+  '/gas/governance': typeof GasGovernanceRoute
+  '/gas/quality': typeof GasQualityRoute
+  '/gas/simulator': typeof GasSimulatorRoute
+  '/electric/': typeof ElectricIndexRoute
+  '/gas/': typeof GasIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +134,14 @@ export interface FileRoutesByTo {
   '/governance': typeof GovernanceRoute
   '/quality': typeof QualityRoute
   '/simulator': typeof SimulatorRoute
+  '/gas/assets': typeof GasAssetsRoute
+  '/gas/assistant': typeof GasAssistantRoute
+  '/gas/dma': typeof GasDmaRoute
+  '/gas/governance': typeof GasGovernanceRoute
+  '/gas/quality': typeof GasQualityRoute
+  '/gas/simulator': typeof GasSimulatorRoute
+  '/electric': typeof ElectricIndexRoute
+  '/gas': typeof GasIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +153,14 @@ export interface FileRoutesById {
   '/governance': typeof GovernanceRoute
   '/quality': typeof QualityRoute
   '/simulator': typeof SimulatorRoute
+  '/gas/assets': typeof GasAssetsRoute
+  '/gas/assistant': typeof GasAssistantRoute
+  '/gas/dma': typeof GasDmaRoute
+  '/gas/governance': typeof GasGovernanceRoute
+  '/gas/quality': typeof GasQualityRoute
+  '/gas/simulator': typeof GasSimulatorRoute
+  '/electric/': typeof ElectricIndexRoute
+  '/gas/': typeof GasIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +173,14 @@ export interface FileRouteTypes {
     | '/governance'
     | '/quality'
     | '/simulator'
+    | '/gas/assets'
+    | '/gas/assistant'
+    | '/gas/dma'
+    | '/gas/governance'
+    | '/gas/quality'
+    | '/gas/simulator'
+    | '/electric/'
+    | '/gas/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +191,14 @@ export interface FileRouteTypes {
     | '/governance'
     | '/quality'
     | '/simulator'
+    | '/gas/assets'
+    | '/gas/assistant'
+    | '/gas/dma'
+    | '/gas/governance'
+    | '/gas/quality'
+    | '/gas/simulator'
+    | '/electric'
+    | '/gas'
   id:
     | '__root__'
     | '/'
@@ -121,6 +209,14 @@ export interface FileRouteTypes {
     | '/governance'
     | '/quality'
     | '/simulator'
+    | '/gas/assets'
+    | '/gas/assistant'
+    | '/gas/dma'
+    | '/gas/governance'
+    | '/gas/quality'
+    | '/gas/simulator'
+    | '/electric/'
+    | '/gas/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -132,6 +228,14 @@ export interface RootRouteChildren {
   GovernanceRoute: typeof GovernanceRoute
   QualityRoute: typeof QualityRoute
   SimulatorRoute: typeof SimulatorRoute
+  GasAssetsRoute: typeof GasAssetsRoute
+  GasAssistantRoute: typeof GasAssistantRoute
+  GasDmaRoute: typeof GasDmaRoute
+  GasGovernanceRoute: typeof GasGovernanceRoute
+  GasQualityRoute: typeof GasQualityRoute
+  GasSimulatorRoute: typeof GasSimulatorRoute
+  ElectricIndexRoute: typeof ElectricIndexRoute
+  GasIndexRoute: typeof GasIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -192,6 +296,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/gas/': {
+      id: '/gas/'
+      path: '/gas'
+      fullPath: '/gas/'
+      preLoaderRoute: typeof GasIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/electric/': {
+      id: '/electric/'
+      path: '/electric'
+      fullPath: '/electric/'
+      preLoaderRoute: typeof ElectricIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gas/simulator': {
+      id: '/gas/simulator'
+      path: '/gas/simulator'
+      fullPath: '/gas/simulator'
+      preLoaderRoute: typeof GasSimulatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gas/quality': {
+      id: '/gas/quality'
+      path: '/gas/quality'
+      fullPath: '/gas/quality'
+      preLoaderRoute: typeof GasQualityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gas/governance': {
+      id: '/gas/governance'
+      path: '/gas/governance'
+      fullPath: '/gas/governance'
+      preLoaderRoute: typeof GasGovernanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gas/dma': {
+      id: '/gas/dma'
+      path: '/gas/dma'
+      fullPath: '/gas/dma'
+      preLoaderRoute: typeof GasDmaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gas/assistant': {
+      id: '/gas/assistant'
+      path: '/gas/assistant'
+      fullPath: '/gas/assistant'
+      preLoaderRoute: typeof GasAssistantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gas/assets': {
+      id: '/gas/assets'
+      path: '/gas/assets'
+      fullPath: '/gas/assets'
+      preLoaderRoute: typeof GasAssetsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -204,6 +364,14 @@ const rootRouteChildren: RootRouteChildren = {
   GovernanceRoute: GovernanceRoute,
   QualityRoute: QualityRoute,
   SimulatorRoute: SimulatorRoute,
+  GasAssetsRoute: GasAssetsRoute,
+  GasAssistantRoute: GasAssistantRoute,
+  GasDmaRoute: GasDmaRoute,
+  GasGovernanceRoute: GasGovernanceRoute,
+  GasQualityRoute: GasQualityRoute,
+  GasSimulatorRoute: GasSimulatorRoute,
+  ElectricIndexRoute: ElectricIndexRoute,
+  GasIndexRoute: GasIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

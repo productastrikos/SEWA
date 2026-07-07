@@ -115,6 +115,9 @@ export const Droplets = make(
     <path d="M6 21c1.5-1.5 3-1.5 4.5 0" />
   </>,
 );
+export const Flame = make(
+  <path d="M12 3s3.5 3.5 3.5 7a3.5 3.5 0 0 1-7 0c0-1.2.6-2 1-2.7C10 9 8 11 8 14a4 4 0 0 0 8 0c0-4.5-4-6-4-11Z" />,
+);
 export const FlaskConical = make(
   <>
     <path d="M9 3h6" />

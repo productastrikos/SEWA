@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader, Panel } from "@/components/AppShell";
 import { useApp } from "@/lib/app-context";
-import { ASSETS, ALARMS, KPI, DMA_ZONES } from "@/lib/mock-data";
+import { ASSETS, ALARMS, KPI, DMA_ZONES, WATER_SOP_OPTIONS } from "@/lib/mock-data";
 import { AlertTriangle, Droplets, Activity, Wifi, ArrowUpRight, TrendingDown } from "@/lib/icons";
 import { AreaChart, Area, ResponsiveContainer } from "recharts";
 import { series } from "@/lib/mock-data";
@@ -198,7 +198,7 @@ function AssetStatusStrip() {
 }
 
 function HubPage() {
-  const { t, lang, theme } = useApp();
+  const { t, lang, theme, openAlertPanel } = useApp();
   return (
     <div className="p-6 space-y-6 animate-fade-in">
       <PageHeader
@@ -294,7 +294,10 @@ function HubPage() {
               return (
                 <div
                   key={a.id}
-                  className={`flex items-start gap-3 p-2.5 ${!a.ack ? "isa-unack-ring" : ""}`}
+                  onClick={() => openAlertPanel({ alarm: a, sectorLabel: "Water", sopOptions: WATER_SOP_OPTIONS })}
+                  role="button"
+                  tabIndex={0}
+                  className={`flex items-start gap-3 p-2.5 cursor-pointer transition hover:brightness-125 ${!a.ack ? "isa-unack-ring" : ""}`}
                   style={{
                     background:
                       a.severity === 1 && !a.ack ? "var(--ds-danger-bg)" : "var(--ds-surface-soft)",
