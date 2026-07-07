@@ -33,6 +33,8 @@ export default defineConfig(({ command }) => ({
       server: { entry: "server" },
     }),
     react(),
-    ...(command === "build" ? [nitro({ defaultPreset: "cloudflare-module" })] : []),
+    // Node.js/VPS hosting (e.g. Hostinger) — a plain, portable Node server
+    // rather than a Cloudflare Workers module.
+    ...(command === "build" ? [nitro({ preset: "node-server" })] : []),
   ],
 }));
